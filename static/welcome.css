@@ -1,0 +1,118 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body,
+html {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  background-color: #4666da; /* Placeholder for the blue background */
+  font-family: Arial, sans-serif;
+}
+.welcome-container {
+  width: 600px;
+  height: 400px; /* Total height including the top margin */
+  display: flex;
+  position: relative; /* For absolute positioning of child elements */
+  background: transparent;
+}
+.logo-slogan {
+  flex: 0 0 340px; /* flex-grow, flex-shrink, flex-basis */
+  height: 400px; /* Height of the logo and slogan box */
+  background: #fff; /* White background */
+  border: 5px solid #000; /* Border as per the layout */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-right: 10px;
+}
+.forms-container {
+  flex: 1; /* Take up the remaining space */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align the forms to the right */
+}
+.login {
+  width: 250px;
+  height: 100px;
+  background: #fff;
+  border: 5px solid #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.signup {
+  width: 250px; /* Width as per the layout */
+  height: 290px; /* Height as per the layout */
+  background: #fff; /* White background */
+  border: 5px solid #000; /* Border as per the layout */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-container {
+  display: flex; /* Use flexbox for inline layout */
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 15px;
+}
+
+.input-container label {
+  width: 80px;
+  margin: 0;
+  margin-right: 5px;
+  margin-top: 10px;
+  text-align: left;
+}
+
+.submit-container {
+  text-align: right; /* Align the button to the right */
+  margin-bottom: 10px;
+  margin-top: 3px;
+}
+
+.login-button {
+  padding: 2px 10px; /* Padding inside the button */
+  background-color: #1e3958; /* A blue background color for the button */
+  color: white; /* White text color for the button */
+  border: none; /* No border for the button */
+  border-radius: 4px; /* Rounded corners for the button */
+  cursor: pointer; /* Change cursor to indicate button */
+}
+
+.login-button:hover {
+  background-color: #0056b3; /* Darker blue background on hover */
+}
+
+.signup-button {
+  padding: 2px 10px; /* Padding inside the button */
+  background-color: #1e3958; /* A blue background color for the button */
+  color: white; /* White text color for the button */
+  border: none; /* No border for the button */
+  border-radius: 4px; /* Rounded corners for the button */
+  cursor: pointer; /* Change cursor to indicate button */
+}
+
+.signup-button:hover {
+  background-color: #0056b3; /* Darker blue background on hover */
+}
+.form-field {
+  width: 66%; /* Makes the field take up the full width of its container */
+  padding: 1px 3px; /* Adjust the padding to match your design */
+  font-size: 13px; /* Sets a font size */
+  border: 1px solid #ccc; /* Border styling, you can customize this */
+  border-radius: 4px; /* Optional: rounds the corners of the inputs */
+  box-sizing: border-box; /* Ensures padding doesn't affect overall width */
+  display: flex; /* Use flexbox for inline layout */
+  justify-content: flex-start;
+  align-items: center;
+}

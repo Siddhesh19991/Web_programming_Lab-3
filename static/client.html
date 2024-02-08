@@ -1,0 +1,197 @@
+<html>
+    <head>
+        <link href="client.css" type="text/css" rel="stylesheet">
+        <script src="client.js" type="text/javascript"></script>
+        <script src="serverstub.js" type="text/javascript"></script>
+        <script type=”text/view” id="welcomeview">
+            <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Welcome View Layout</title>
+                    <link rel="stylesheet" href="client.css"> 
+                    </head>
+                    
+            <body>
+            
+                <div class="welcome-container">
+                    <div class="logo-slogan">
+                            <img src="wimage.png" alt="Logo" class="logo-image">
+                        </div>
+                    <div class="forms-container"> 
+                        <div class="login">
+                            <form onsubmit=" return check_login(event)">
+                                <div class="input-container">
+                                    <label for="login-email">Email</label>
+                                    <input type="email" id="login-email" name="username" required placeholder="Enter your email">
+                                </div>
+                                <div class="input-container">
+                                    <label for="login-password">Password</label>
+                                    <input type="password" id="login-password" name="password" required placeholder="Enter your password">
+                                </div>
+                                <div class="submit-container">
+                                    <button type="submit" value="save" class="login-button">Login</button>
+                                    <p id = "login_message"></p>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="signup"> 
+                            <form id = "sign-form" onsubmit=" return check()">
+                                <div class="input-container">
+                                    <label for="signup-email">Email</label>
+                                    <input type="email" id="signup-email" name="username" required placeholder="Enter your email">
+                                </div>
+                
+                                <div class="input-container">
+                                    <label for="signup-password">Password</label>
+                                    <input type="password" id="signup-password" name="password" required minlength="8" placeholder="Enter your password">
+                                    <p id = "error_message"></p>
+
+                                </div>
+                
+                                <div class="input-container">
+                                    <label for="signup-repeatpass">Repeat Pswrd</label>
+                                    <input type="password" id="signup-repeatpass" name="repeatpassword" required placeholder="Repeat your password">
+                                </div>
+                
+                                <div class="input-container">
+                                    <label for="signup-name">First Name</label>
+                                    <input type="text" id="signup-name" name="firstname" required placeholder="Enter your first name">
+                                </div>
+                
+                                <div class="input-container">
+                                    <label for="signup-familyName">Family Name</label>
+                                    <input type="text" id="signup-familyName" name="familyname" required placeholder="Enter your family name">
+                                </div>
+                
+                                <div class="input-container">
+                                    <label for="signup-gender">Gender</label>
+                                    <select id="signup-gender" name="gender" class="form-field" required>
+                                        <option value=""></option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                
+                                <div class="input-container">
+                                    <label for="signup-city">City</label>
+                                    <input type="text" id="signup-city" name="city" required placeholder="Enter your city">
+                                </div>
+                
+                                <div class="input-container">
+                                    <label for="signup-country">Country</label>
+                                    <input type="text" id="signup-country" name="country" required placeholder="Enter your country">
+                                </div>
+                
+                                <div class="submit-container">
+                                    <button type="submit" value="save" class="signup-button">Sign Up</button>
+                                    <p id = "signup_message"></p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+        </script> 
+        <script type="text/view" id="profileview">
+            <div class="nav-bar">
+                <button id="home-button" class="nav-button" onclick="openHome()" style="text-decoration: underline;">home</button>
+                <button id="browse-button" class="nav-button" onclick="openBrowse()">browse</button>
+                <button id="account-button" class="nav-button" onclick="openAccount()">account</button>
+              </div>
+            <div class="profile-container">
+                <div id="home-tab">
+
+                    <div id="home-content">
+                        <div class="home-info-container">
+                        <p class = "bold">First Name:</p>
+                        <p id="I1"></p>
+                        <p class = "bold">Family Name:</p>
+                        <p id="I2"></p>
+                        <p class = "bold">Gender:</p>
+                        <p id="I3"></p>
+                        <p class = "bold">City:</p>
+                        <p id="I4"></p>
+                        <p class = "bold">Country:</p>
+                        <p id="I5"></p>
+                        <p class = "bold">Email:</p>
+                        <p id="I6"></p>
+                        </div>
+                        <br>
+                        <form>
+                            <div class="text-area">
+                                <label id = "msg" for="message-content">Message: </label>
+                                <input
+                                    type="text"
+                                    id="text"
+                                    required
+                                    placeholder="Enter your text"
+                                />
+                            </div>
+                            <div id="msg_post"></div>
+                            <div class="post-container ">
+                            <button onclick="text_save()">post</button>
+                        </div>
+
+                        </form>
+                        <h2 class="title">All messages posted:</h2>
+                        <div id="text-wall"></div>
+                            <div class="refresh-container ">
+                            <button onclick="refresh()">refresh</button>
+                        </div>
+
+                    </div>
+                </div>
+                <div id="browse-tab">
+                    <div id="browse-content">
+        
+                        <form id="user-details" onsubmit="return userretrive()">
+                            <div class="email-browse-container">
+                              <label for="user email">Email: </label>
+                              <input type="email" id="user-email" name="email" placeholder="Enter e-mail">
+                                <button type="submit" value="save" class="retrive-button">Retrive information</button>
+                                <p id = "retrive_message"></p>
+                            </div>
+
+                        </form>
+                        <div id="user-wall"></div>
+                    </div>
+                </div>
+                <div id="account-tab">
+                    <div id="account-content">
+                      <form id="password-form" onsubmit="return passwordChange()">
+                        <div class="input-container">
+                          <label for="old-password">Old Password</label>
+                          <input type="password" id="old-password" name="oldpassword" placeholder="old password">
+                        </div>
+                        <div class="input-container">
+                          <label for="new-password">New Password</label>
+                          <input type="password" id="new-change-password" name="changedpassword" required minlength="8" placeholder="new password">
+                        </div>
+                        <div class="input-container">
+                            <label for="new-password-repeat">Repeat New Password</label>
+                            <input type="password" id="changed-password" name="changedpasswordrepeat" required minlength="8" placeholder="repeat password">
+                          </div>
+                        <div class="submit-container">
+                          <button type="submit" value="save" class="save-password-button">Save</button>
+                          <p id = "password_change_message"></p>
+                        </div>
+                      </form>
+                      <div class="submit-container">
+                        <button type="button" class="signout" onclick="signout()">Signout</button>
+                        <p id="signout_message"></p>
+                      </div>
+                    </div>
+                </div>
+              </div>
+        </script>
+</head>
+<body>
+    <div id="viewContainer">
+        <!-- One of the content views above will come here -->
+    </div>
+   
+    
+</body>
+</html>

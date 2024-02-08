@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome View Layout</title>
+    <link rel="stylesheet" href="welcome.css" />
+    <!-- This line links your CSS file -->
+  </head>
+
+  <body>
+    <div class="welcome-container">
+      <div class="logo-slogan">
+        <img src="wimage.png" alt="Logo" class="logo-image" />
+      </div>
+      <div class="forms-container">
+        <!-- Changed class name to forms-container -->
+        <div class="login">
+          <form action="/login" method="post">
+            <!-- What does action and method -->
+            <div class="input-container">
+              <label for="login-email">Email</label>
+              <input
+                type="email"
+                id="login-email"
+                name="username"
+                required
+                placeholder="Enter your email"
+              />
+            </div>
+            <div class="input-container">
+              <label for="login-password">Password</label>
+              <input
+                type="password"
+                id="login-password"
+                name="password"
+                minlength="8"
+                required
+                placeholder="Enter your password"
+              />
+            </div>
+            <div class="submit-container">
+              <button type="submit" class="login-button">Login</button>
+            </div>
+          </form>
+        </div>
+        <div class="signup">
+          <form method="post" onsubmit="check()">
+            <div class="input-container">
+              <label for="signup-email">Email</label>
+              <input
+                type="email"
+                id="signup-email"
+                name="username"
+                required
+                placeholder="Enter your email"
+              />
+            </div>
+
+            <div class="input-container">
+              <label for="signup-password">Password</label>
+              <input
+                type="password"
+                id="signup-password"
+                name="password"
+                minlength="8"
+                required
+                placeholder="Enter your password"
+              />
+            </div>
+
+            <div class="input-container">
+              <label for="signup-repeatpass">Repeat Pswrd</label>
+              <input
+                type="password"
+                id="signup-repeatpass"
+                name="repeatpassword"
+                required
+                placeholder="Repeat your password"
+              />
+            </div>
+
+            <div class="input-container">
+              <label for="signup-name">First Name</label>
+              <input
+                type="text"
+                id="signup-name"
+                name="firstname"
+                required
+                placeholder="Enter your first name"
+              />
+            </div>
+
+            <div class="input-container">
+              <label for="signup-familyName">Family Name</label>
+              <input
+                type="text"
+                id="signup-familyName"
+                name="familyname"
+                required
+                placeholder="Enter your family name"
+              />
+            </div>
+
+            <div class="input-container">
+              <label for="signup-gender">Gender</label>
+              <select
+                id="signup-gender"
+                name="gender"
+                class="form-field"
+                required
+              >
+                <option value=""></option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="input-container">
+              <label for="signup-city">City</label>
+              <input
+                type="text"
+                id="signup-city"
+                name="city"
+                required
+                placeholder="Enter your city"
+              />
+            </div>
+
+            <div class="input-container">
+              <label for="signup-country">Country</label>
+              <input
+                type="text"
+                id="signup-country"
+                name="country"
+                required
+                placeholder="Enter your country"
+              />
+            </div>
+
+            <div class="submit-container">
+              <button type="submit" value="save" class="signup-button">
+                Sign Up
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-container">
+      <div id="home-tab">
+        <button id="home-button">home</button>
+        <div id="home-content">
+          <p>Firstname</p>
+          <p></p>
+          <p>Familyname</p>
+          <p></p>
+          <p>Gender</p>
+          <p></p>
+          <p>City</p>
+          <p></p>
+          <p>Country</p>
+          <p></p>
+          <p>Email</p>
+          <p></p>
+
+          <form>
+            <div class="text-area">
+              <label for="signup-name">First Name</label>
+              <input type="text" id="text" required placeholder="Enter text" />
+            </div>
+            <button>post</button>
+          </form>
+        </div>
+      </div>
+      <div id="browse-tab">
+        <button id="browse-button">browse</button>
+        <div id="browse-content">
+          <p>def</p>
+        </div>
+      </div>
+      <div id="account-tab">
+        <button id="account-button">account</button>
+        <div id="account-content">
+          <p>ghi</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
