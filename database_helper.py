@@ -186,6 +186,29 @@ def get_user_data_with_token(token):  # get user data with token from database
     return user_data
 
 
+def get_user_data_with_email(email):  # get user data with email from database
+    db = get_db()
+    cursor = db.cursor()  # sqlite internal function to execute the query
+    cursor.execute(
+        """
+        select
+            firstname,
+            familyname,
+            gender,
+            city,
+            country,
+            email
+        from
+            user
+        where
+            email = ?
+        """,
+        [email])
+    # fetchone returns None if there is no data
+    user_data = cursor.fetchone()  # just to get one row from the database.to be safe
+    return user_data
+
+
 def find_token():
     db = get_db()
     cursor = db.cursor()

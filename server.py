@@ -127,6 +127,31 @@ def get_user_data_by_token(token):
     return jsonify({"success": "true", "msg": "user data retrieved", "data": received_data}), 200
 
 
+@app.route("/get_user_data_by_email/<email>", methods=["GET"])
+def get_user_data_by_email(email):
+    # check if the token is valid
+    token = request.headers.get("authorization")
+    token_user_data = database_helper.get_user_data_with_token(token)
+    if token_user_data == None:
+        return jsonify({"success": "false", "msg": "token invalid"}), 200
+
+    # get the user data with the email
+    email_user_data = database_helper.get_user_data_with_email(email)
+
+    if email_user_data == None:
+        return jsonify({"success": "false", "msg": "User with this email not found! Check the email."}), 200
+
+    received_data = {
+        "firstname": email_user_data[0],
+        "familyname": email_user_data[1],
+        "gender": email_user_data[2],
+        "city": email_user_data[3],
+        "country": email_user_data[4],
+        "email": email_user_data[5]
+    }
+    return jsonify({"success": "true", "msg": "user data retrieved", "data": received_data}), 200
+
+
 @app.route("/post_message", methods=["POST"])
 def post_msg():
     json_dic = request.get_json()
