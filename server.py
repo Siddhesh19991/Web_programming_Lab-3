@@ -64,7 +64,7 @@ def sign_in():
 
     if password == password_check:
         database_helper.token_store(email, token)
-        return jsonify({"success": "true", "token": token, "msg": "logged in successucfully"}), 200
+        return jsonify({"success": "true", "token": token, "msg": "logged in successucfully", "email": email}), 200
     else:
         return jsonify({"success": "false", "msg": "incorrect password"}), 200
 
@@ -106,10 +106,10 @@ def change_password():
         return jsonify({"success": "false", "msg": "incorrect old password or token invalid"}), 200
 
 
-@app.route("/get_user_data_by_token", methods=["GET"])
-def get_user_data_by_token():
+@app.route("/get_user_data_by_token/<token>", methods=["GET"])
+def get_user_data_by_token(token):
     # get the token from the header with authorization key
-    token = request.headers.get("authorization")
+    # token = request.headers.get("authorization")
     user_data = database_helper.get_user_data_with_token(token)
 
     if user_data == None:
@@ -130,10 +130,13 @@ def get_user_data_by_token():
 @app.route("/post_message", methods=["POST"])
 def post_msg():
     json_dic = request.get_json()
-    token = request.headers.get("Authorization")
-    # token = json_dic["token"]
+    # token = request.headers.get("Authorization")
+    token = json_dic["token"]
     email = json_dic["email"]
     message = json_dic["message"]
+
+    # token = database_helper.find_token()
+    # email = database_helper.find_email()
 
     if database_helper.get_token(token) == False:
         return jsonify({"success": "false", "msg": "token doesnt exist"}), 200
@@ -150,10 +153,8 @@ def post_msg():
     return jsonify({"success": "true", "msg": "message posted!"}), 200
 
 
-@app.route("/get_user_messages_by_token", methods=["GET"])
-def get_msg_token():
-
-    token = request.headers.get("Authorization")
+@app.route("/get_user_messages_by_token/<token>", methods=["GET"])
+def get_msg_token(token):
 
     print(token)
 
@@ -186,8 +187,10 @@ def get_msg_email(email):
 
 
 @app.route('/')
-def hello_world():
-    return "Hello World!"
+def root():
+    app = Flask(__name__, static_url_path='/static')
+
+    return app.send_static_file("client.html")
 
 
 if __name__ == "__main__":

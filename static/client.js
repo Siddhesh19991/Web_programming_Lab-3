@@ -14,7 +14,7 @@ window.onload = function () {
   // returns null if the token is not set
   token = localStorage.getItem("token");
   signedIn = token != null;
-  // var signedIn = false;
+  //var signedIn = false;
 
   if (!signedIn) {
     var welcomeView = document.getElementById("welcomeview").textContent;
@@ -50,6 +50,22 @@ window.onload = function () {
 
 // check password while signup is the same
 function check() {
+  let xmlr = new XMLHttpRequest();
+  xmlr.open("POST", "/sign_up", true);
+
+  //print("abc");
+
+  xmlr.onreadystatechange = function () {
+    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+      let jsonResponse = JSON.parse(xmlr.responseText);
+      console.log(jsonResponse);
+      document.getElementById("signup_message").innerHTML = jsonResponse.msg;
+    }
+  };
+
+  xmlr.setRequestHeader("Content-Type", "application/json;charset = utf-8");
+  ///// What is the above for?/////
+
   event.preventDefault();
 
   intial_pw = document.getElementById("signup-password").value;
@@ -75,8 +91,11 @@ function check() {
       city: document.getElementById("signup-city").value,
       country: document.getElementById("signup-country").value,
     };
-    var userinfo = serverstub.signUp(formData);
-    document.getElementById("signup_message").innerHTML = userinfo.message;
+
+    xmlr.send(JSON.stringify(formData));
+
+    // var userinfo = serverstub.signUp(formData);
+    //document.getElementById("signup_message").innerHTML = userinfo.message;
     //console.log(userinfo.message);
 
     document.getElementById("signup-email").value = "";
@@ -93,28 +112,53 @@ function check() {
 }
 
 var login_info;
+
 //check login fields and go to next page according to login status
 function check_login() {
+  event.preventDefault();
+  let xmlr = new XMLHttpRequest();
+  xmlr.open("POST", "/sign_in", true);
+
+  //print("abc");
+
+  xmlr.onreadystatechange = function () {
+    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+      let jsonResponse = JSON.parse(xmlr.responseText);
+      console.log(jsonResponse);
+      document.getElementById("login_message").innerHTML = jsonResponse.msg;
+
+      if (!jsonResponse.success) {
+        return false; //stay on login screen
+      } else {
+        localStorage.setItem("token", jsonResponse.token); // login token saved
+        localStorage.setItem("email", jsonResponse.email);
+
+        //if success true open next page
+        var profileViewContent =
+          document.getElementById("profileview").textContent;
+        displayView(profileViewContent);
+      }
+
+      //login sucess-opening next page data retrieval and post-tezt retrieval
+
+      console.log(jsonResponse.token);
+      data_retrival(jsonResponse.token);
+      text_display(jsonResponse.token);
+    }
+  };
+
+  xmlr.setRequestHeader("Content-Type", "application/json;charset = utf-8");
+
   password_entered = document.getElementById("login-password").value;
   email_entered = document.getElementById("login-email").value;
 
-  login_info = serverstub.signIn(email_entered, password_entered);
+  //login_info = serverstub.signIn(email_entered, password_entered);
   // console.log(login_info);
-  document.getElementById("login_message").innerHTML = login_info.message;
+  //document.getElementById("login_message").innerHTML = login_info.message;
 
-  if (!login_info.success) {
-    return false; //stay on login screen
-  } else {
-    localStorage.setItem("token", login_info.data); // login token saved
-
-    //if success true open next page
-    var profileViewContent = document.getElementById("profileview").textContent;
-    displayView(profileViewContent);
-  }
-
-  //login sucess-opening next page data retrieval and post-tezt retrieval
-  data_retrival(login_info.data);
-  text_display();
+  xmlr.send(
+    JSON.stringify({ email: email_entered, password: password_entered })
+  );
 }
 
 function openHome() {
@@ -161,58 +205,111 @@ function openAccount() {
 }
 
 function data_retrival(token) {
-  alldata = serverstub.getUserDataByToken(token);
+  let xmlr = new XMLHttpRequest();
+  xmlr.open("GET", "/get_user_data_by_token/" + token, true);
+  //alldata = serverstub.getUserDataByToken(token);
 
-  document.querySelector("#I1").textContent = alldata.data.firstname;
-  document.querySelector("#I2").textContent = alldata.data.familyname;
-  document.querySelector("#I3").textContent = alldata.data.gender;
-  document.querySelector("#I4").textContent = alldata.data.city;
-  document.querySelector("#I5").textContent = alldata.data.country;
-  document.querySelector("#I6").textContent = alldata.data.email;
+  xmlr.onreadystatechange = function () {
+    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+      let jsonResponse = JSON.parse(xmlr.responseText);
+
+      console.log(jsonResponse);
+
+      document.querySelector("#I1").textContent = jsonResponse.data.firstname;
+      document.querySelector("#I2").textContent = jsonResponse.data.familyname;
+      document.querySelector("#I3").textContent = jsonResponse.data.gender;
+      document.querySelector("#I4").textContent = jsonResponse.data.city;
+      document.querySelector("#I5").textContent = jsonResponse.data.country;
+      document.querySelector("#I6").textContent = jsonResponse.data.email;
+    }
+  };
+
+  xmlr.send();
 }
 
 function text_save() {
   event.preventDefault();
+
+  let xmlr = new XMLHttpRequest();
+  xmlr.open("POST", "/post_message", true);
+  xmlr.setRequestHeader("Content-Type", "application/json;charset = utf-8");
+
+  xmlr.onreadystatechange = function () {
+    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+      let jsonResponse = JSON.parse(xmlr.responseText);
+      console.log(jsonResponse);
+      document.getElementById("msg_post").innerHTML = jsonResponse.msg;
+    }
+  };
 
   text_msg = document.getElementById("text").value;
 
   if (text_msg != "") {
     document.getElementById("text").value = "";
     //console.log(text_msg);
-    let token = localStorage.getItem("token");
-    alldata = serverstub.getUserDataByToken(token);
+    //let token = localStorage.getItem("token");
+    //alldata = serverstub.getUserDataByToken(token);
 
-    a = serverstub.postMessage(token, text_msg, alldata.data.email);
+    //a = serverstub.postMessage(token, text_msg, alldata.data.email);
 
-    document.getElementById("msg_post").innerHTML = a.message;
-  } else {
-    document.getElementById("msg_post").innerHTML = "Cannot be empty";
+    //document.getElementById("msg_post").innerHTML = a.message;
+    //} else {
+    //  document.getElementById("msg_post").innerHTML = "Cannot be empty";
+    //}
+    xmlr.send(
+      JSON.stringify({
+        email: localStorage.getItem("email"),
+        message: text_msg,
+        token: localStorage.getItem("token"),
+      })
+    );
   }
 }
 
-function text_display() {
-  let token = localStorage.getItem("token");
-  array = serverstub.getUserMessagesByToken(token);
-  console.log(array);
+function text_display(token) {
+  //let token = localStorage.getItem("token");
+
+  let xmlr = new XMLHttpRequest();
+  xmlr.open("GET", "/get_user_messages_by_token/" + token, true);
+
+  //array = serverstub.getUserMessagesByToken(token);
+
+  xmlr.onreadystatechange = function () {
+    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+      let array = JSON.parse(xmlr.responseText);
+      array = array.all_messages[0][0];
+
+      array = array.split(";");
+      console.log(array);
+
+      var store_value = [];
+
+      if (array.length >= 2) {
+        for (let rep = 0; rep < array.length; rep++) {
+          store_value[rep] = array[rep];
+        }
+
+        // id+text
+        for (let rep = 1; rep < array.length; rep++) {
+          document.getElementById(
+            "text-wall"
+          ).innerHTML += `<div id="idChild"> ${array.length - rep}) ${
+            store_value[rep]
+          } </div>`;
+        }
+      }
+    }
+  };
+
   //console.log(array.data[0].content); there is error here in chrome console!
-  var store_value = [];
 
-  for (let rep = 0; rep < array.data.length; rep++) {
-    store_value[rep] = array.data[rep].content;
-  }
-
-  // id+text
-  for (let rep = 0; rep < array.data.length; rep++) {
-    document.getElementById("text-wall").innerHTML += `<div id="idChild"> ${
-      array.data.length - rep
-    }) ${store_value[rep]} </div>`;
-  }
+  xmlr.send();
 }
 
 function refresh() {
   document.getElementById("msg_post").innerHTML = "";
   document.getElementById("text-wall").innerHTML = "";
-  text_display();
+  text_display(localStorage.token);
 }
 
 //change password in account tab
@@ -223,33 +320,58 @@ function passwordChange() {
 
   token_login = localStorage.getItem("token");
 
+  let xmlr = new XMLHttpRequest();
+  xmlr.open("POST", "/change_password", true);
+  xmlr.setRequestHeader("Content-Type", "application/json;charset = utf-8");
+
   if (new_password !== new_password_repeat) {
     document.getElementById("password_change_message").innerHTML =
       "Error: New passwords do not match";
     return false; // prevent reload
   }
 
-  var password_change = serverstub.changePassword(
-    token_login,
-    old_password,
-    new_password
-  );
-  console.log(password_change);
-  document.getElementById("password_change_message").innerHTML =
-    password_change.message;
+  xmlr.onreadystatechange = function () {
+    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+      let jsonResponse = JSON.parse(xmlr.responseText);
+      document.getElementById("password_change_message").innerHTML =
+        jsonResponse.msg;
+    }
+  };
 
   document.getElementById("old-password").value = "";
   document.getElementById("new-change-password").value = "";
   document.getElementById("changed-password").value = "";
+
+  xmlr.send(
+    JSON.stringify({
+      old_pass: old_password,
+      new_pass: new_password,
+      token: localStorage.getItem("token"),
+    })
+  );
 
   return false; // prevent reload
 }
 
 //signout function in account tab
 function signout() {
-  token_login = localStorage.getItem("token");
-  var signout = serverstub.signOut(token_login);
-  document.getElementById("signout_message").innerHTML = signout.message;
+  let xmlr = new XMLHttpRequest();
+  xmlr.open("POST", "/sign_out", true);
+  xmlr.setRequestHeader("Content-Type", "application/json;charset = utf-8");
+
+  xmlr.onreadystatechange = function () {
+    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+      let jsonResponse = JSON.parse(xmlr.responseText);
+      document.getElementById("signout_message").innerHTML = jsonResponse.msg;
+    }
+  };
+
+  xmlr.send(
+    JSON.stringify({
+      token: localStorage.getItem("token"),
+    })
+  );
+
   localStorage.removeItem("token");
   localStorage.removeItem("activeProfileViewTab");
   setTimeout(function () {

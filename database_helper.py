@@ -163,7 +163,7 @@ def get_message(email):
     return (all_msgs)
 
 
-def get_user_data_with_token(token): # get user data with token from database
+def get_user_data_with_token(token):  # get user data with token from database
     db = get_db()
     cursor = db.cursor()  # sqlite internal function to execute the query
     cursor.execute(
@@ -181,6 +181,26 @@ def get_user_data_with_token(token): # get user data with token from database
             email = (select email from token_data where token = ?)
         """,
         [token])
-    #fetchone returns None if there is no data
-    user_data = cursor.fetchone() # just to get one row from the database.to be safe
+    # fetchone returns None if there is no data
+    user_data = cursor.fetchone()  # just to get one row from the database.to be safe
     return user_data
+
+
+def find_token():
+    db = get_db()
+    cursor = db.cursor()
+    token_value = cursor.execute(
+        "select token from token_data where token != ? ", [""])
+    token_value = token_value.fetchone()
+
+    return (token_value)
+
+
+def find_email():
+    db = get_db()
+    cursor = db.cursor()
+    email_value = cursor.execute(
+        "select email from token_data where token != ? ", [""])
+    email_value = email_value.fetchone()
+
+    return (email_value)
