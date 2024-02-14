@@ -25,6 +25,16 @@ window.onload = function () {
   var profileView = document.getElementById("profileview").textContent;
   displayView(profileView);
 
+  const websocket = new WebSocket("ws://" + location.host + "/echo");
+
+  websocket.onopen = function (event) {
+    console.log("WebSocket connection opened.");
+  };
+
+  websocket.onerror = function (event) {
+    console.error("WebSocket error:", event);
+  };
+
   //get the last active tab from localstorage
   let activeTab = localStorage.getItem("activeProfileViewTab");
   if (activeTab == null) {
@@ -127,7 +137,7 @@ function check_login() {
       console.log(jsonResponse);
       document.getElementById("login_message").innerHTML = jsonResponse.msg;
 
-      if (!jsonResponse.success) {
+      if (jsonResponse.success == "false") {
         return false; //stay on login screen
       } else {
         localStorage.setItem("token", jsonResponse.token); // login token saved
@@ -138,6 +148,32 @@ function check_login() {
           document.getElementById("profileview").textContent;
         displayView(profileViewContent);
       }
+
+      const websocket = new WebSocket("ws://" + location.host + "/echo");
+
+      websocket.onopen = function (event) {
+        console.log("WebSocket connection opened.");
+
+        websocket.send(jsonResponse.token);
+
+        websocket.onmessage = function (message) {
+          console.log(message.data);
+          if (message.data == "sign_out") {
+            setTimeout(function () {
+              localStorage.removeItem("token");
+              localStorage.removeItem("activeProfileViewTab");
+              //make the page wait for 2 seconds before redirecting to welcome page
+              var welcomeViewScript = document.getElementById("welcomeview");
+              var contentView = welcomeViewScript.textContent;
+              displayView(contentView);
+            }, 2000);
+          }
+        };
+      };
+
+      websocket.onerror = function (event) {
+        console.error("WebSocket error:", event);
+      };
 
       //login sucess-opening next page data retrieval and post-tezt retrieval
 

@@ -4,9 +4,14 @@ import database_helper
 import secrets
 from email_validator import validate_email, EmailNotValidError
 import secrets
+from flask_sock import Sock
 
 
 app = Flask(__name__)
+sock = Sock(app)
+
+
+active_users = {}
 
 
 @app.route("/sign_up", methods=["POST"])
@@ -61,6 +66,11 @@ def sign_in():
         return jsonify({"success": "false", "msg": "user does not exist"}), 200
 
     password_check = database_helper.user_check(email)
+
+    if email in active_users:
+        print("already logged in")
+        active_users[email].send("sign_out")
+        del active_users[email]
 
     if password == password_check:
         database_helper.token_store(email, token)
@@ -209,6 +219,27 @@ def get_msg_email(email):
     all_msg = database_helper.get_message(email)
 
     return jsonify({"success": "true", "msg": "data retrived!", "all_messages": all_msg}), 200
+
+
+@sock.route("/echo")
+def echo(sock):
+    while True:
+        token = sock.receive()
+        # print(token)
+        email = database_helper.get_email(token)
+
+        if email in active_users:
+            print("already logged in")
+            del active_users[email]
+
+            sock.send("sign_out")
+
+            active_users[email] = sock
+            print(sock)
+
+        else:
+            active_users[email] = sock
+            print(sock)
 
 
 @app.route('/')
