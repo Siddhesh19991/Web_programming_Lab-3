@@ -129,8 +129,6 @@ function check_login() {
   let xmlr = new XMLHttpRequest();
   xmlr.open("POST", "/sign_in", true);
 
-  //print("abc");
-
   xmlr.onreadystatechange = function () {
     if ((xmlr.status = 200 && xmlr.readyState == 4)) {
       let jsonResponse = JSON.parse(xmlr.responseText);
@@ -162,6 +160,8 @@ function check_login() {
             setTimeout(function () {
               localStorage.removeItem("token");
               localStorage.removeItem("activeProfileViewTab");
+
+              websocket.close();
               //make the page wait for 2 seconds before redirecting to welcome page
               var welcomeViewScript = document.getElementById("welcomeview");
               var contentView = welcomeViewScript.textContent;
