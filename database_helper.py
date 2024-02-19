@@ -55,7 +55,7 @@ def find_user(email):
         return False
 
 
-def user_check(email):
+def get_password_with_email(email):
     db = get_db()
     cursor = db.cursor()
     cursor = db.execute(
@@ -114,56 +114,34 @@ def update_password(password, email):
     get_db().commit()
 
 
-def append_message(email, message):
+def append_message(sender_email, receiver_email, message):
+    db = get_db()
+    cursor = db.cursor()
+    
+    cursor.execute(
+        """
+        INSERT INTO
+            messages (sender, receiver, message_data)
+        VALUES
+            (?, ?, ?)
+        """,
+        [sender_email, receiver_email, message]
+    )
+    
+    db.commit()
+
+
+def get_messages(receiver_email):
     db = get_db()
     cursor = db.cursor()
     all_msgs = cursor.execute(
-        "select messages from user where email = ?", [email])
+        "SELECT sender, receiver, message_data FROM messages where receiver = ?", [receiver_email])
     all_msgs = all_msgs.fetchall()
 
-    new_msgs = []
-
-    for row in all_msgs:
-        # Create a new list by combining the existing tuple with the new message
-        new_row = list(row) + [message]
-        # Append the new list to new_msgs
-        new_msgs.append(new_row)
-
-    print(new_msgs)
-
-    # all_msgs = all_msgs.append(message)
-
-    ############ Why cant I do cursor.execute twice in the same function? #####################
-
-    # cursor.execute("update user set messages = ? where email = ?", [
-    #    all_msgs, email])
-    # get_db().commit()
-
-    return (new_msgs)
+    return all_msgs
 
 
-def push_message(email, message):
-    db = get_db()
-    cursor = db.cursor()
-
-    message = ';'.join(map(str, message[0]))  # changed from "," to ";"
-
-    cursor.execute("update user set messages = ? where email = ?", [
-                   message, email])
-    get_db().commit()
-
-
-def get_message(email):
-    db = get_db()
-    cursor = db.cursor()
-    all_msgs = cursor.execute(
-        "select messages from user where email = ?", [email])
-    all_msgs = all_msgs.fetchall()
-
-    return (all_msgs)
-
-
-def get_user_data_with_token(token):  # get user data with token from database
+def get_user_data_with_token(token): # get user data with token from database
     db = get_db()
     cursor = db.cursor()  # sqlite internal function to execute the query
     cursor.execute(
@@ -181,12 +159,12 @@ def get_user_data_with_token(token):  # get user data with token from database
             email = (select email from token_data where token = ?)
         """,
         [token])
-    # fetchone returns None if there is no data
-    user_data = cursor.fetchone()  # just to get one row from the database.to be safe
+    #fetchone returns None if there is no data
+    user_data = cursor.fetchone() # just to get one row from the database.to be safe
     return user_data
 
 
-def get_user_data_with_email(email):  # get user data with email from database
+def get_user_data_with_email(email): # get user data with email from database
     db = get_db()
     cursor = db.cursor()  # sqlite internal function to execute the query
     cursor.execute(
@@ -204,26 +182,6 @@ def get_user_data_with_email(email):  # get user data with email from database
             email = ?
         """,
         [email])
-    # fetchone returns None if there is no data
-    user_data = cursor.fetchone()  # just to get one row from the database.to be safe
+    #fetchone returns None if there is no data
+    user_data = cursor.fetchone() # just to get one row from the database.to be safe
     return user_data
-
-
-def find_token():
-    db = get_db()
-    cursor = db.cursor()
-    token_value = cursor.execute(
-        "select token from token_data where token != ? ", [""])
-    token_value = token_value.fetchone()
-
-    return (token_value)
-
-
-def find_email():
-    db = get_db()
-    cursor = db.cursor()
-    email_value = cursor.execute(
-        "select email from token_data where token != ? ", [""])
-    email_value = email_value.fetchone()
-
-    return (email_value)

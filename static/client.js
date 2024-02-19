@@ -126,20 +126,21 @@ var login_info;
 //check login fields and go to next page according to login status
 function check_login() {
   event.preventDefault();
+  password_entered = document.getElementById("login-password").value;
+  email_entered = document.getElementById("login-email").value;
   let xmlr = new XMLHttpRequest();
   xmlr.open("POST", "/sign_in", true);
 
   xmlr.onreadystatechange = function () {
     if ((xmlr.status = 200 && xmlr.readyState == 4)) {
       let jsonResponse = JSON.parse(xmlr.responseText);
-      console.log(jsonResponse);
       document.getElementById("login_message").innerHTML = jsonResponse.msg;
 
       if (jsonResponse.success == "false") {
         return false; //stay on login screen
       } else {
-        localStorage.setItem("token", jsonResponse.token); // login token saved
-        localStorage.setItem("email", jsonResponse.email);
+        localStorage.setItem("token", jsonResponse.data); // login token saved
+        localStorage.setItem("email", email_entered);
 
         //if success true open next page
         var profileViewContent =
@@ -177,29 +178,24 @@ function check_login() {
 
       //login sucess-opening next page data retrieval and post-tezt retrieval
 
-      console.log(jsonResponse.token);
-      data_retrival(jsonResponse.token);
-      text_display(jsonResponse.token);
+      data_retrival();
+      text_display();
     }
   };
 
   xmlr.setRequestHeader("Content-Type", "application/json;charset = utf-8");
-
-  password_entered = document.getElementById("login-password").value;
-  email_entered = document.getElementById("login-email").value;
 
   //login_info = serverstub.signIn(email_entered, password_entered);
   // console.log(login_info);
   //document.getElementById("login_message").innerHTML = login_info.message;
 
   xmlr.send(
-    JSON.stringify({ email: email_entered, password: password_entered })
+    JSON.stringify({ username: email_entered, password: password_entered })
   );
 }
 
 function openHome() {
-  let token = localStorage.getItem("token");
-  data_retrival(token);
+  data_retrival();
 
   document.getElementById("home-content").style.display = "block";
   document.getElementById("browse-content").style.display = "none";
@@ -240,10 +236,11 @@ function openAccount() {
   localStorage.setItem("activeProfileViewTab", "account");
 }
 
-function data_retrival(token) {
+function data_retrival() {
+  let token = localStorage.getItem("token");
   let xmlr = new XMLHttpRequest();
-  xmlr.open("GET", "/get_user_data_by_token/" + token, true);
-  //alldata = serverstub.getUserDataByToken(token);
+  xmlr.open("GET", "/get_user_data_by_token", true);
+  xmlr.setRequestHeader("Authorization", token);
 
   xmlr.onreadystatechange = function () {
     if ((xmlr.status = 200 && xmlr.readyState == 4)) {
@@ -266,14 +263,15 @@ function data_retrival(token) {
 function text_save() {
   event.preventDefault();
 
+  let token = localStorage.getItem("token");
   let xmlr = new XMLHttpRequest();
   xmlr.open("POST", "/post_message", true);
   xmlr.setRequestHeader("Content-Type", "application/json;charset = utf-8");
+  xmlr.setRequestHeader("Authorization", token);
 
   xmlr.onreadystatechange = function () {
     if ((xmlr.status = 200 && xmlr.readyState == 4)) {
       let jsonResponse = JSON.parse(xmlr.responseText);
-      console.log(jsonResponse);
       document.getElementById("msg_post").innerHTML = jsonResponse.msg;
     }
   };
@@ -282,58 +280,49 @@ function text_save() {
 
   if (text_msg != "") {
     document.getElementById("text").value = "";
-    //console.log(text_msg);
-    //let token = localStorage.getItem("token");
-    //alldata = serverstub.getUserDataByToken(token);
-
-    //a = serverstub.postMessage(token, text_msg, alldata.data.email);
-
-    //document.getElementById("msg_post").innerHTML = a.message;
-    //} else {
-    //  document.getElementById("msg_post").innerHTML = "Cannot be empty";
-    //}
     xmlr.send(
       JSON.stringify({
         email: localStorage.getItem("email"),
         message: text_msg,
-        token: localStorage.getItem("token"),
       })
     );
   }
 }
 
-function text_display(token) {
-  //let token = localStorage.getItem("token");
+function text_display() {
+  let token = localStorage.getItem("token");
 
   let xmlr = new XMLHttpRequest();
-  xmlr.open("GET", "/get_user_messages_by_token/" + token, true);
+  xmlr.open("GET", "/get_user_messages_by_token", true);
+  xmlr.setRequestHeader("Authorization", token);
 
   //array = serverstub.getUserMessagesByToken(token);
 
   xmlr.onreadystatechange = function () {
     if ((xmlr.status = 200 && xmlr.readyState == 4)) {
-      let array = JSON.parse(xmlr.responseText);
-      array = array.all_messages[0][0];
+      let responseData = JSON.parse(xmlr.responseText);
+      allMessages = responseData.all_messages;
+      //array = array.all_messages[0][0];
+      //array = array.split(";");
+      //console.log(array);
 
-      array = array.split(";");
-      console.log(array);
+      //var store_value = [];
 
-      var store_value = [];
-
-      if (array.length >= 2) {
-        for (let rep = 0; rep < array.length; rep++) {
-          store_value[rep] = array[rep];
-        }
+      //if (array.length >= 2) {
+        //for (let rep = 0; rep < array.length; rep++) {
+        //  store_value[rep] = array[rep];
+        //}
 
         // id+text
-        for (let rep = 1; rep < array.length; rep++) {
+        for (let rep = 0; rep < allMessages.length; rep++) {
+          msgIndex = allMessages.length - rep;
           document.getElementById(
             "text-wall"
-          ).innerHTML += `<div id="idChild"> ${array.length - rep}) ${
-            store_value[rep]
+          ).innerHTML += `<div id="idChild"> ${msgIndex}) ${
+            allMessages[msgIndex - 1].message
           } </div>`;
         }
-      }
+      //}
     }
   };
 
@@ -345,7 +334,7 @@ function text_display(token) {
 function refresh() {
   document.getElementById("msg_post").innerHTML = "";
   document.getElementById("text-wall").innerHTML = "";
-  text_display(localStorage.token);
+  text_display();
 }
 
 //change password in account tab
@@ -354,12 +343,12 @@ function passwordChange() {
   new_password = document.getElementById("new-change-password").value;
   new_password_repeat = document.getElementById("changed-password").value;
 
-  token_login = localStorage.getItem("token");
+  token = localStorage.getItem("token");
 
   let xmlr = new XMLHttpRequest();
   xmlr.open("POST", "/change_password", true);
   xmlr.setRequestHeader("Content-Type", "application/json;charset = utf-8");
-
+  xmlr.setRequestHeader("Authorization", token);
   if (new_password !== new_password_repeat) {
     document.getElementById("password_change_message").innerHTML =
       "Error: New passwords do not match";
@@ -382,7 +371,6 @@ function passwordChange() {
     JSON.stringify({
       old_pass: old_password,
       new_pass: new_password,
-      token: localStorage.getItem("token"),
     })
   );
 
@@ -391,31 +379,27 @@ function passwordChange() {
 
 //signout function in account tab
 function signout() {
+  let token = localStorage.getItem("token");
   let xmlr = new XMLHttpRequest();
-  xmlr.open("POST", "/sign_out", true);
+  xmlr.open("DELETE", "/sign_out", true);
   xmlr.setRequestHeader("Content-Type", "application/json;charset = utf-8");
+  xmlr.setRequestHeader("Authorization", token);
 
   xmlr.onreadystatechange = function () {
     if ((xmlr.status = 200 && xmlr.readyState == 4)) {
       let jsonResponse = JSON.parse(xmlr.responseText);
       document.getElementById("signout_message").innerHTML = jsonResponse.msg;
+      localStorage.removeItem("token");
+      localStorage.removeItem("activeProfileViewTab");
+      setTimeout(function () {
+        //make the page wait for 2 seconds before redirecting to welcome page
+        var welcomeViewScript = document.getElementById("welcomeview");
+        var contentView = welcomeViewScript.textContent;
+        displayView(contentView);
+      }, 2000);
     }
   };
-
-  xmlr.send(
-    JSON.stringify({
-      token: localStorage.getItem("token"),
-    })
-  );
-
-  localStorage.removeItem("token");
-  localStorage.removeItem("activeProfileViewTab");
-  setTimeout(function () {
-    //make the page wait for 2 seconds before redirecting to welcome page
-    var welcomeViewScript = document.getElementById("welcomeview");
-    var contentView = welcomeViewScript.textContent;
-    displayView(contentView);
-  }, 2000);
+  xmlr.send();
 }
 
 var user;
