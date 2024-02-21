@@ -117,7 +117,7 @@ def update_password(password, email):
 def append_message(sender_email, receiver_email, message):
     db = get_db()
     cursor = db.cursor()
-    
+
     cursor.execute(
         """
         INSERT INTO
@@ -127,7 +127,7 @@ def append_message(sender_email, receiver_email, message):
         """,
         [sender_email, receiver_email, message]
     )
-    
+
     db.commit()
 
 
@@ -141,7 +141,7 @@ def get_messages(receiver_email):
     return all_msgs
 
 
-def get_user_data_with_token(token): # get user data with token from database
+def get_user_data_with_token(token):  # get user data with token from database
     db = get_db()
     cursor = db.cursor()  # sqlite internal function to execute the query
     cursor.execute(
@@ -159,12 +159,12 @@ def get_user_data_with_token(token): # get user data with token from database
             email = (select email from token_data where token = ?)
         """,
         [token])
-    #fetchone returns None if there is no data
-    user_data = cursor.fetchone() # just to get one row from the database.to be safe
+    # fetchone returns None if there is no data
+    user_data = cursor.fetchone()  # just to get one row from the database.to be safe
     return user_data
 
 
-def get_user_data_with_email(email): # get user data with email from database
+def get_user_data_with_email(email):  # get user data with email from database
     db = get_db()
     cursor = db.cursor()  # sqlite internal function to execute the query
     cursor.execute(
@@ -182,6 +182,6 @@ def get_user_data_with_email(email): # get user data with email from database
             email = ?
         """,
         [email])
-    #fetchone returns None if there is no data
-    user_data = cursor.fetchone() # just to get one row from the database.to be safe
+    # fetchone returns None if there is no data
+    user_data = cursor.fetchone()  # just to get one row from the database.to be safe
     return user_data
