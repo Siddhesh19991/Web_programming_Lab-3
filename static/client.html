@@ -105,17 +105,17 @@
                     <div id="home-content">
                         <div class="home-info-container">
                         <p class = "bold">First Name:</p>
-                        <p id="I1"></p>
+                        <p id="user-first-name"></p>
                         <p class = "bold">Family Name:</p>
-                        <p id="I2"></p>
+                        <p id="user-family-name"></p>
                         <p class = "bold">Gender:</p>
-                        <p id="I3"></p>
+                        <p id="user-gender"></p>
                         <p class = "bold">City:</p>
-                        <p id="I4"></p>
+                        <p id="user-city"></p>
                         <p class = "bold">Country:</p>
-                        <p id="I5"></p>
+                        <p id="user-country"></p>
                         <p class = "bold">Email:</p>
-                        <p id="I6"></p>
+                        <p id="user-mail"></p>
                         </div>
                         <br>
                         <form>
@@ -123,25 +123,20 @@
                                 <label id = "msg" for="message-content">Message: </label>
                                 <input
                                     type="text"
-                                    id="text"
+                                    id="user-text-to-be-posted"
                                     required
                                     placeholder="Enter your text"
                                 />
+                                <button onclick="text_save()">post</button>
                             </div>
-                            <div id="msg_post"></div>
-                            <div class="post-container ">
-                            <button onclick="text_save()">post</button>
-                        </div>
-
+                            <div id="message-post-response"></div>
                         </form>
                         <h2 class="title">All messages posted:</h2>
+                        <button onclick="refresh()">refresh</button>
                         <div id="text-wall"></div>
-                            <div class="refresh-container ">
-                            <button onclick="refresh()">refresh</button>
-                        </div>
-
                     </div>
                 </div>
+
                 <div id="browse-tab">
                     <div id="browse-content">
         
@@ -152,11 +147,13 @@
                                 <button type="submit" value="save" class="retrive-button">Retrive information</button>
                                 <p id = "retrive_message"></p>
                             </div>
-
                         </form>
-                        <div id="user-wall"></div>
+                        <div id="user-wall">
+                            
+                        </div>
                     </div>
                 </div>
+
                 <div id="account-tab">
                     <div id="account-content">
                       <form id="password-form" onsubmit="return passwordChange()">
@@ -185,6 +182,49 @@
                 </div>
               </div>
         </script>
+        <script type="text/view" id="browse-tab">
+            <div id="home-content">
+                <div class="home-info-container">
+                <p class = "bold">First Name:</p>
+                <p id="other_first_name"></p>
+                <p class = "bold">Family Name:</p>
+                <p id="other_family_name"></p>
+                <p class = "bold">Gender:</p>
+                <p id="other_gender"></p>
+                <p class = "bold">City:</p>
+                <p id="other_city"></p>
+                <p class = "bold">Country:</p>
+                <p id="other_country"></p>
+                <p class = "bold">Email:</p>
+                <p id="other_email"></p>
+                </div>
+                <br>
+                <form>
+                    <div class="text-area">
+                        <label id = "msg" for="message-content">Message: </label>
+                        <input
+                            type="text"
+                            id="message-text-to-be-posted"
+                            required
+                            placeholder="Enter your text"
+                        />
+                        <button onclick="other_user_test_save()">post</button>
+                    </div>
+                    <div id="server-response"></div>
+
+                </form>
+                <h2 class="title">All messages posted:</h2>
+                <button onclick="other_user_refresh()">Refresh Message Wall</button>
+                <div id="other-user-text-wall"></div>
+                    <div class="refresh-container ">
+                </div>
+
+
+        </div>
+    </div>
+
+        </script>  
+            
 </head>
 <body>
     <div id="viewContainer">
