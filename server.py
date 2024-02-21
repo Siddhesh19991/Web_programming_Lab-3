@@ -79,9 +79,14 @@ def sign_in():
         return jsonify({"success": False, "msg": "e-mail and password fields are required"}), 200
 
     if (database_helper.find_user(email) == False):
-        return jsonify({"success": False, "msg": "user does not exist"}), 200
+        return jsonify({"success": False, "msg": "user does not exist"}), 20
 
     password_check = database_helper.get_password_with_email(email)
+
+    if email in active_users:
+        print("already logged in")
+        active_users[email].send("sign_out")
+        del active_users[email]
 
     if password == password_check:
         database_helper.token_store(email, token)
