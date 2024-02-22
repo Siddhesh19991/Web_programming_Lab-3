@@ -141,7 +141,7 @@ function check_login() {
         displayView(profileViewContent);
       }
 
-      const websocket = new WebSocket("ws://" + location.host + "/echo");
+      const websocket = new WebSocket("wss://" + location.host + "/echo");
 
       websocket.onopen = function (event) {
         console.log("WebSocket connection opened.");
