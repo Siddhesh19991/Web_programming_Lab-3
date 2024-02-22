@@ -26,6 +26,7 @@ window.onload = function () {
   displayView(profileView);
 
   const websocket = new WebSocket("ws://" + location.host + "/echo");
+  console.log(websocket);
 
   websocket.onopen = function (event) {
     console.log("WebSocket connection opened.");
@@ -128,8 +129,8 @@ function check_login() {
     if ((xmlr.status = 200 && xmlr.readyState == 4)) {
       let jsonResponse = JSON.parse(xmlr.responseText);
       document.getElementById("login_message").innerHTML = jsonResponse.msg;
-
-      if (jsonResponse.success == "false") {
+      console.log(jsonResponse.success);
+      if (jsonResponse.success == false) {
         return false; //stay on login screen
       } else {
         localStorage.setItem("token", jsonResponse.data); // login token saved
@@ -141,12 +142,13 @@ function check_login() {
         displayView(profileViewContent);
       }
 
-      const websocket = new WebSocket("wss://" + location.host + "/echo");
+      const websocket = new WebSocket("ws://" + location.host + "/echo");
+
+      console.log(websocket);
 
       websocket.onopen = function (event) {
         console.log("WebSocket connection opened.");
-
-        websocket.send(jsonResponse.token);
+        websocket.send(jsonResponse.data);
 
         websocket.onmessage = function (message) {
           console.log(message.data);
@@ -167,6 +169,8 @@ function check_login() {
 
       websocket.onerror = function (event) {
         console.error("WebSocket error:", event);
+        console.error("WebSocket readyState:", websocket.readyState);
+        console.error("WebSocket URL:", websocket.url);
       };
 
       //login sucess-opening next page data retrieval and post-tezt retrieval
@@ -240,12 +244,17 @@ function data_retrival() {
     if ((xmlr.status = 200 && xmlr.readyState == 4)) {
       let jsonResponse = JSON.parse(xmlr.responseText);
 
-      document.getElementById("user-first-name").textContent = jsonResponse.data.firstname;
-      document.getElementById("user-family-name").textContent = jsonResponse.data.familyname;
-      document.getElementById("user-gender").textContent = jsonResponse.data.gender;
+      document.getElementById("user-first-name").textContent =
+        jsonResponse.data.firstname;
+      document.getElementById("user-family-name").textContent =
+        jsonResponse.data.familyname;
+      document.getElementById("user-gender").textContent =
+        jsonResponse.data.gender;
       document.getElementById("user-city").textContent = jsonResponse.data.city;
-      document.getElementById("user-country").textContent = jsonResponse.data.country;
-      document.getElementById("user-mail").textContent = jsonResponse.data.email;
+      document.getElementById("user-country").textContent =
+        jsonResponse.data.country;
+      document.getElementById("user-mail").textContent =
+        jsonResponse.data.email;
     }
   };
 
@@ -264,7 +273,8 @@ function text_save() {
   xmlr.onreadystatechange = function () {
     if ((xmlr.status = 200 && xmlr.readyState == 4)) {
       let jsonResponse = JSON.parse(xmlr.responseText);
-      document.getElementById("message-post-response").innerHTML = jsonResponse.msg;
+      document.getElementById("message-post-response").innerHTML =
+        jsonResponse.msg;
     }
   };
 
@@ -279,7 +289,8 @@ function text_save() {
       })
     );
   } else {
-    document.getElementById("message-post-response").innerHTML = "Cannot be empty";
+    document.getElementById("message-post-response").innerHTML =
+      "Cannot be empty";
   }
 }
 
@@ -298,7 +309,9 @@ function text_display() {
       for (let rep = 0; rep < allMessages.length; rep++) {
         msgIndex = allMessages.length - rep;
         document.getElementById("text-wall").innerHTML += `
-        <div id="message-${msgIndex}"> ${msgIndex}) - ${allMessages[msgIndex - 1].message} <br>
+        <div id="message-${msgIndex}"> ${msgIndex}) - ${
+          allMessages[msgIndex - 1].message
+        } <br>
         <i>posted by: ${allMessages[msgIndex - 1].sender}</i>
         </div>`;
       }
@@ -310,7 +323,8 @@ function text_display() {
   xmlr.send();
 }
 
-function refresh() { //clean the server message and text wall home tab
+function refresh() {
+  //clean the server message and text wall home tab
   document.getElementById("message-post-response").innerHTML = "";
   document.getElementById("text-wall").innerHTML = "";
 
@@ -382,22 +396,23 @@ function signout() {
   xmlr.send();
 }
 
-function userretrive() { //retrieve information browse tab
+function userretrive() {
+  //retrieve information browse tab
   event.preventDefault();
 
   userEmail = document.getElementById("user-email").value;
   let token = localStorage.getItem("token");
   let xmlr = new XMLHttpRequest();
-  
+
   xmlr.open("GET", `/get_user_data_by_email/${userEmail}`, true);
   xmlr.setRequestHeader("Authorization", token);
 
   xmlr.onreadystatechange = function () {
     if ((xmlr.status = 200 && xmlr.readyState == 4)) {
-
       let responseData = JSON.parse(xmlr.responseText);
 
-      if (responseData.success == false) { // if its not sucess
+      if (responseData.success == false) {
+        // if its not sucess
         document.getElementById("user-wall").innerHTML = "";
         document.getElementById("retrive_message").innerHTML = responseData.msg;
         return;
@@ -409,13 +424,19 @@ function userretrive() { //retrieve information browse tab
         //user-wall is empty page in the beginning
         document.getElementById("user-wall").innerHTML = browseTabContent;
 
-        // display other users information in browse tab related fields 
-        document.getElementById("other_first_name").textContent = responseData.data.firstname;
-        document.getElementById("other_family_name").textContent = responseData.data.familyname;
-        document.getElementById("other_gender").textContent = responseData.data.gender;
-        document.getElementById("other_city").textContent = responseData.data.city;
-        document.getElementById("other_country").textContent = responseData.data.country;
-        document.getElementById("other_email").textContent = responseData.data.email;
+        // display other users information in browse tab related fields
+        document.getElementById("other_first_name").textContent =
+          responseData.data.firstname;
+        document.getElementById("other_family_name").textContent =
+          responseData.data.familyname;
+        document.getElementById("other_gender").textContent =
+          responseData.data.gender;
+        document.getElementById("other_city").textContent =
+          responseData.data.city;
+        document.getElementById("other_country").textContent =
+          responseData.data.country;
+        document.getElementById("other_email").textContent =
+          responseData.data.email;
 
         let xmlr2 = new XMLHttpRequest();
         xmlr2.open("GET", `get_user_messages_by_email/${userEmail}`, true);
@@ -425,18 +446,20 @@ function userretrive() { //retrieve information browse tab
           if ((xmlr2.status = 200 && xmlr2.readyState == 4)) {
             let userMessagesData = JSON.parse(xmlr2.responseText);
             let allMessages = userMessagesData.all_messages;
-            
+
             for (let rep = 0; rep < allMessages.length; rep++) {
               msgIndex = allMessages.length - rep;
               document.getElementById(
                 "other-user-text-wall"
-              ).innerHTML += `<div id="message-${msgIndex}"> ${msgIndex} - ${allMessages[msgIndex - 1].message} <br>
+              ).innerHTML += `<div id="message-${msgIndex}"> ${msgIndex} - ${
+                allMessages[msgIndex - 1].message
+              } <br>
               <i>posted by: ${allMessages[msgIndex - 1].sender}</i>
               </div>`;
             }
           }
-        }
-        xmlr2.send()
+        };
+        xmlr2.send();
       }
     }
   };
@@ -444,9 +467,12 @@ function userretrive() { //retrieve information browse tab
   return false;
 }
 
-function other_user_test_save() { //other user text post
+function other_user_test_save() {
+  //other user text post
   event.preventDefault();
-  textMessageToBePosted = document.getElementById("message-text-to-be-posted").value;
+  textMessageToBePosted = document.getElementById(
+    "message-text-to-be-posted"
+  ).value;
   otherUserEmail = document.getElementById("user-email").value;
 
   if (textMessageToBePosted == "") {
@@ -466,23 +492,24 @@ function other_user_test_save() { //other user text post
       let responseData = JSON.parse(xmlr.responseText);
       document.getElementById("server-response").innerHTML = responseData.msg;
     }
-  }
+  };
   xmlr.send(
     JSON.stringify({
       email: otherUserEmail,
       message: textMessageToBePosted,
-    })    
+    })
   );
   return false;
 }
 
-function other_user_refresh() { //refresh message wall browse tab
+function other_user_refresh() {
+  //refresh message wall browse tab
   document.getElementById("server-response").innerHTML = "";
   document.getElementById("message-text-to-be-posted").innerHTML = "";
   document.getElementById("other-user-text-wall").innerHTML = "";
   userMail = document.getElementById("user-email").value;
   let token = localStorage.getItem("token");
-  
+
   let xmlr = new XMLHttpRequest();
   xmlr.open("GET", `get_user_messages_by_email/${userEmail}`, true);
   xmlr.setRequestHeader("Authorization", token);
@@ -496,11 +523,13 @@ function other_user_refresh() { //refresh message wall browse tab
         msgIndex = allMessages.length - rep;
         document.getElementById(
           "other-user-text-wall"
-        ).innerHTML += `<div id="message-${msgIndex}"> ${msgIndex} - ${allMessages[msgIndex - 1].message} <br>
+        ).innerHTML += `<div id="message-${msgIndex}"> ${msgIndex} - ${
+          allMessages[msgIndex - 1].message
+        } <br>
         <i>posted by: ${allMessages[msgIndex - 1].sender}</i>
         </div>`;
       }
     }
-  }
-  xmlr.send()
+  };
+  xmlr.send();
 }
