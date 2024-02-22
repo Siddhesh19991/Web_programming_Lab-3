@@ -275,7 +275,7 @@ function text_save() {
     xmlr.send(
       JSON.stringify({
         email: localStorage.getItem("email"),
-        message: text_msg,
+        message: textMessage,
       })
     );
   } else {
@@ -326,7 +326,7 @@ function passwordChange() {
   token = localStorage.getItem("token");
 
   let xmlr = new XMLHttpRequest();
-  xmlr.open("POST", "/change_password", true);
+  xmlr.open("PUT", "/change_password", true);
   xmlr.setRequestHeader("Content-Type", "application/json;charset = utf-8");
   xmlr.setRequestHeader("Authorization", token);
   if (new_password !== new_password_repeat) {
@@ -349,8 +349,8 @@ function passwordChange() {
 
   xmlr.send(
     JSON.stringify({
-      old_pass: old_password,
-      new_pass: new_password,
+      oldpassword: old_password,
+      newpassword: new_password,
     })
   );
 
