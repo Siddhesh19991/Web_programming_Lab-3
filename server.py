@@ -74,6 +74,11 @@ def sign_in():
 
 
     token = secrets.token_hex(16) #generate token
+
+    if email in active_users:
+        print("already logged in")
+        active_users[email].send("sign_out")
+        del active_users[email]
     
     if email == None or password == None:
         return jsonify({"success": False, "msg": "e-mail and password fields are required"}), 200
@@ -82,11 +87,6 @@ def sign_in():
         return jsonify({"success": False, "msg": "user does not exist"}), 20
 
     password_check = database_helper.get_password_with_email(email)
-
-    if email in active_users:
-        print("already logged in")
-        active_users[email].send("sign_out")
-        del active_users[email]
 
     if password == password_check:
         database_helper.token_store(email, token)
@@ -268,12 +268,6 @@ def echo(sock):
 
         if email in active_users:
             print("already logged in")
-            del active_users[email]
-
-            sock.send("sign_out")
-
-            active_users[email] = sock
-            print(sock)
 
         else:
             active_users[email] = sock
@@ -290,3 +284,12 @@ def root():
 if __name__ == "__main__":
     app.debug = True
     app.run()
+
+
+
+#del active_users[email]
+#
+#            sock.send("sign_out")
+
+#            active_users[email] = sock
+#            print(sock)
