@@ -192,8 +192,10 @@ function check_login() {
 }
 
 function openHome() {
+
   data_retrival();
   text_display();
+  document.getElementById("text-wall").innerHTML = "";
 
   document.getElementById("home-content").style.display = "block";
   document.getElementById("browse-content").style.display = "none";
@@ -202,13 +204,17 @@ function openHome() {
   document.getElementById("home-button").style.textDecoration = "underline";
   document.getElementById("browse-button").style.textDecoration = null;
   document.getElementById("account-button").style.textDecoration = null;
+  document.getElementById("text-wall").innerHTML = "";
+
 
   //to track in which tab we left the webapp we save it to local storage with specific key-> activeProfileViewTab
   //(keyword,value)
   localStorage.setItem("activeProfileViewTab", "home");
+
 }
 
 function openBrowse() {
+
   text_display();
 
   document.getElementById("home-content").style.display = "none";
@@ -218,8 +224,11 @@ function openBrowse() {
   document.getElementById("home-button").style.textDecoration = null;
   document.getElementById("browse-button").style.textDecoration = "underline";
   document.getElementById("account-button").style.textDecoration = null;
+  document.getElementById("text-wall").innerHTML = "";
+
 
   localStorage.setItem("activeProfileViewTab", "browse");
+
 }
 
 function openAccount() {
@@ -230,6 +239,8 @@ function openAccount() {
   document.getElementById("home-button").style.textDecoration = null;
   document.getElementById("browse-button").style.textDecoration = null;
   document.getElementById("account-button").style.textDecoration = "underline";
+  document.getElementById("text-wall").innerHTML = "";
+
 
   localStorage.setItem("activeProfileViewTab", "account");
 }
@@ -533,3 +544,5 @@ function other_user_refresh() {
   };
   xmlr.send();
 }
+
+
