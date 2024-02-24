@@ -278,7 +278,7 @@ def echo(sock):
             print("already logged in")
             del active_users[email]
 
-            sock.send("sign_out")
+            # sock.send("sign_out")
 
             active_users[email] = sock
             print(sock)
@@ -298,11 +298,3 @@ def root():
 if __name__ == "__main__":
     app.debug = True
     app.run()
-
-
-# del active_users[email]
-#
-#            sock.send("sign_out")
-
-#            active_users[email] = sock
-#            print(sock)

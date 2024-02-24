@@ -30,6 +30,24 @@ window.onload = function () {
 
   websocket.onopen = function (event) {
     console.log("WebSocket connection opened.");
+    token = localStorage.getItem("token");
+    websocket.send(token);
+
+    websocket.onmessage = function (message) {
+      console.log(message.data);
+      if (message.data == "sign_out") {
+        setTimeout(function () {
+          localStorage.removeItem("token");
+          localStorage.removeItem("activeProfileViewTab");
+
+          websocket.close();
+          //make the page wait for 2 seconds before redirecting to welcome page
+          var welcomeViewScript = document.getElementById("welcomeview");
+          var contentView = welcomeViewScript.textContent;
+          displayView(contentView);
+        }, 2000);
+      }
+    };
   };
 
   websocket.onerror = function (event) {
@@ -65,7 +83,7 @@ function check() {
   xmlr.open("POST", "/sign_up", true);
 
   xmlr.onreadystatechange = function () {
-    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+    if (xmlr.status == 200 && xmlr.readyState == 4) {
       let jsonResponse = JSON.parse(xmlr.responseText);
       document.getElementById("signup_message").innerHTML = jsonResponse.msg;
     }
@@ -126,7 +144,7 @@ function check_login() {
   xmlr.open("POST", "/sign_in", true);
 
   xmlr.onreadystatechange = function () {
-    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+    if (xmlr.status == 200 && xmlr.readyState == 4) {
       let jsonResponse = JSON.parse(xmlr.responseText);
       document.getElementById("login_message").innerHTML = jsonResponse.msg;
       console.log(jsonResponse.success);
@@ -192,7 +210,6 @@ function check_login() {
 }
 
 function openHome() {
-
   data_retrival();
   text_display();
   document.getElementById("text-wall").innerHTML = "";
@@ -206,15 +223,12 @@ function openHome() {
   document.getElementById("account-button").style.textDecoration = null;
   document.getElementById("text-wall").innerHTML = "";
 
-
   //to track in which tab we left the webapp we save it to local storage with specific key-> activeProfileViewTab
   //(keyword,value)
   localStorage.setItem("activeProfileViewTab", "home");
-
 }
 
 function openBrowse() {
-
   text_display();
 
   document.getElementById("home-content").style.display = "none";
@@ -226,9 +240,7 @@ function openBrowse() {
   document.getElementById("account-button").style.textDecoration = null;
   document.getElementById("text-wall").innerHTML = "";
 
-
   localStorage.setItem("activeProfileViewTab", "browse");
-
 }
 
 function openAccount() {
@@ -241,7 +253,6 @@ function openAccount() {
   document.getElementById("account-button").style.textDecoration = "underline";
   document.getElementById("text-wall").innerHTML = "";
 
-
   localStorage.setItem("activeProfileViewTab", "account");
 }
 
@@ -252,7 +263,7 @@ function data_retrival() {
   xmlr.setRequestHeader("Authorization", token);
 
   xmlr.onreadystatechange = function () {
-    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+    if (xmlr.status == 200 && xmlr.readyState == 4) {
       let jsonResponse = JSON.parse(xmlr.responseText);
 
       document.getElementById("user-first-name").textContent =
@@ -282,7 +293,7 @@ function text_save() {
   xmlr.setRequestHeader("Authorization", token);
 
   xmlr.onreadystatechange = function () {
-    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+    if (xmlr.status == 200 && xmlr.readyState == 4) {
       let jsonResponse = JSON.parse(xmlr.responseText);
       document.getElementById("message-post-response").innerHTML =
         jsonResponse.msg;
@@ -313,7 +324,7 @@ function text_display() {
   xmlr.setRequestHeader("Authorization", token);
 
   xmlr.onreadystatechange = function () {
-    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+    if (xmlr.status == 200 && xmlr.readyState == 4) {
       let responseData = JSON.parse(xmlr.responseText);
       allMessages = responseData.all_messages;
 
@@ -361,7 +372,7 @@ function passwordChange() {
   }
 
   xmlr.onreadystatechange = function () {
-    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+    if (xmlr.status == 200 && xmlr.readyState == 4) {
       let jsonResponse = JSON.parse(xmlr.responseText);
       document.getElementById("password_change_message").innerHTML =
         jsonResponse.msg;
@@ -391,7 +402,7 @@ function signout() {
   xmlr.setRequestHeader("Authorization", token);
 
   xmlr.onreadystatechange = function () {
-    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+    if (xmlr.status == 200 && xmlr.readyState == 4) {
       let jsonResponse = JSON.parse(xmlr.responseText);
       document.getElementById("signout_message").innerHTML = jsonResponse.msg;
       localStorage.removeItem("token");
@@ -419,7 +430,7 @@ function userretrive() {
   xmlr.setRequestHeader("Authorization", token);
 
   xmlr.onreadystatechange = function () {
-    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+    if (xmlr.status == 200 && xmlr.readyState == 4) {
       let responseData = JSON.parse(xmlr.responseText);
 
       if (responseData.success == false) {
@@ -454,7 +465,7 @@ function userretrive() {
         xmlr2.setRequestHeader("Authorization", token);
 
         xmlr2.onreadystatechange = function () {
-          if ((xmlr2.status = 200 && xmlr2.readyState == 4)) {
+          if (xmlr2.status == 200 && xmlr2.readyState == 4) {
             let userMessagesData = JSON.parse(xmlr2.responseText);
             let allMessages = userMessagesData.all_messages;
 
@@ -499,7 +510,7 @@ function other_user_test_save() {
   xmlr.setRequestHeader("Content-Type", "application/json;charset = utf-8");
 
   xmlr.onreadystatechange = function () {
-    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+    if (xmlr.status == 200 && xmlr.readyState == 4) {
       let responseData = JSON.parse(xmlr.responseText);
       document.getElementById("server-response").innerHTML = responseData.msg;
     }
@@ -526,7 +537,7 @@ function other_user_refresh() {
   xmlr.setRequestHeader("Authorization", token);
 
   xmlr.onreadystatechange = function () {
-    if ((xmlr.status = 200 && xmlr.readyState == 4)) {
+    if (xmlr.status == 200 && xmlr.readyState == 4) {
       let userMessagesData = JSON.parse(xmlr.responseText);
       allMessages = userMessagesData.all_messages;
 
@@ -544,5 +555,3 @@ function other_user_refresh() {
   };
   xmlr.send();
 }
-
-
