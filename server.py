@@ -76,20 +76,21 @@ def sign_in():
 
     if email in active_users:
         print("already logged in")
-        active_users[email].send("sign_out")
+        if active_users[email].connected:
+            active_users[email].send("sign_out")
         del active_users[email]
 
     if email == None or password == None:
         return jsonify({"success": False, "msg": "e-mail and password fields are required"}), 200
 
     if (database_helper.find_user(email) == False):
-        return jsonify({"success": False, "msg": "user does not exist"}), 20
+        return jsonify({"success": False, "msg": "user does not exist"}), 200
 
     password_check = database_helper.get_password_with_email(email)
 
     if password == password_check:
         database_helper.token_store(email, token)
-        return jsonify({"success": True, "data": token, "msg": "logged in successucfully"}), 200
+        return jsonify({"success": True, "data": token, "msg": "logged in successfully"}), 200
     else:
         return jsonify({"success": False, "msg": "incorrect password"}), 200
 

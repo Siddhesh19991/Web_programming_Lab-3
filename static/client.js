@@ -204,11 +204,13 @@ function check_login() {
   // console.log(login_info);
   //document.getElementById("login_message").innerHTML = login_info.message;
 
-  xmlr.send(
-    JSON.stringify({ username: email_entered, password: password_entered })
-  );
+  xmlr.send(JSON.stringify({ 
+    username: email_entered, 
+    password: password_entered 
+  }));
+  
+ 
 }
-
 function openHome() {
   data_retrival();
   text_display();
