@@ -180,6 +180,8 @@ function check_login() {
               var welcomeViewScript = document.getElementById("welcomeview");
               var contentView = welcomeViewScript.textContent;
               displayView(contentView);
+              document.getElementById("login_message").innerHTML =
+                "You have been sign-out due to multiple sign-ins";
             }, 2000);
           }
         };
@@ -204,12 +206,12 @@ function check_login() {
   // console.log(login_info);
   //document.getElementById("login_message").innerHTML = login_info.message;
 
-  xmlr.send(JSON.stringify({ 
-    username: email_entered, 
-    password: password_entered 
-  }));
-  
- 
+  xmlr.send(
+    JSON.stringify({
+      username: email_entered,
+      password: password_entered,
+    })
+  );
 }
 function openHome() {
   data_retrival();
