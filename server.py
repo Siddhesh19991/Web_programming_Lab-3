@@ -104,6 +104,9 @@ def sign_out():
     if user_data == None:
         return jsonify({"success": False, "msg": "token invalid"}), 200
 
+    email = database_helper.get_email(token)
+
+    del active_users[email]
     database_helper.remove_token(token)
     return jsonify({"success": True, "msg": "sign out successful"}), 200
 
